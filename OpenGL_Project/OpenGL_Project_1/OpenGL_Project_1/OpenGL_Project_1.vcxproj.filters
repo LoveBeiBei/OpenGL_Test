@@ -22,4 +22,12 @@
       <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="OpenGlTest1.h">
+      <Filter>源文件</Filter>
+    </ClInclude>
+    <ClInclude Include="OpenGlTest1_Assist.h">
+      <Filter>源文件</Filter>
+    </ClInclude>
+  </ItemGroup>
 </Project>
