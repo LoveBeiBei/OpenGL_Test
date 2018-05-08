@@ -1,11 +1,7 @@
-// GLEW OpenGL Extension Wrangler Library 管理OpenGL指针
-#define GLEW_STATIC
-#include <GL/eglew.h>
-// GLFW
-// GLFW是一个专门针对OpenGL的C语言库，它提供了一些渲染物体所需的最低限度的接口。它允许用户创建OpenGL上下文，定义窗口参数以及处理用户输入，这正是我们需要的
-#include <GLFW/glfw3.h>
+
 
 #include<iostream>
+#include "OpenGlTest1_Assist.h"
 
 int main()
 {
@@ -44,11 +40,20 @@ int main()
     // 设置opengl渲染画布大小
     glViewport(0, 0, width, height);   //前两个参数控制窗口左下角的位置。第三个和第四个参数控制渲染窗口的宽度和高度（像素）
 
+    // 注册键盘回调函数
+    glfwSetKeyCallback(window, key_callback);
+    
     // 检查glfw是否被要求退出
     while (glfwWindowShouldClose(window) == false)
     {
         // 事件处理函数 检查事件(键盘输入、鼠标移动等)调用对应回调函数
         glfwPollEvents();
+
+        // 设置清空后 缓冲填充色 
+        glClearColor(0.2f, 0.3f, 0.3f, 0.1f);
+        // 清空缓冲
+        glClear(GL_COLOR_BUFFER_BIT);   // GL_COLOR_BUFFER_BIT，GL_DEPTH_BUFFER_BIT和GL_STENCIL_BUFFER_BIT。
+
         // 函数会交换颜色缓冲（它是一个储存着GLFW窗口每一个像素颜色的大缓冲），它在这一迭代中被用来绘制，并且将会作为输出显示在屏幕上
         glfwSwapBuffers(window);
 
