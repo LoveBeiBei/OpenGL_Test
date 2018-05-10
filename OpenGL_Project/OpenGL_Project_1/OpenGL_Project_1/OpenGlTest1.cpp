@@ -1,7 +1,99 @@
+#include <iostream>
+#include <fstream>
+#include <string>
+#include <vector>
+using namespace std;
 
 #include "OpenGlTest1.h"
-#include<iostream>
 #include "OpenGlTest1_Assist.h"
+#include "VertexShader_1.h"
+
+const char* getStrFromFile(string fileName, string& str)
+{
+    ifstream in(fileName, ios::in);
+    istreambuf_iterator<char> beg(in), end;
+    string strOut(beg, end);
+    str = strOut;
+    in.close();
+    return str.c_str();
+}
+
+// 获取顶点数组对象
+GLuint getVAO()
+{
+    // 顶点位置
+    GLfloat vertices[] = {
+        -0.5f, -0.5f, 0.0f,
+        0.5f, -0.5f, 0.0f,
+        0.0f, 0.5f, 0.0f
+    };
+
+    // 顶点缓冲对象
+    GLuint VBO;
+    glGenBuffers(1, &VBO);
+    //glBindBuffer(GL_ARRAY_BUFFER, VBO);
+    //glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
+
+    // 顶点数组对象
+    GLuint VAO;
+    glGenVertexArrays(1, &VAO);
+
+    // 1. 绑定VAO
+    glBindVertexArray(VAO);
+    // 2. 把顶点数组复制到缓冲中供OpenGL使用
+    glBindBuffer(GL_ARRAY_BUFFER, VBO);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
+    // 3. 设置顶点属性指针
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(GLfloat), (GLvoid*)0);
+    glEnableVertexAttribArray(0);
+    //4. 解绑VAO
+    glBindVertexArray(0);
+    return VAO;
+}
+
+GLuint getShaderProgram()
+{
+    string sz1,sz2;
+    const char* vertexShaderSource = getStrFromFile("vertexShader.txt", sz1);
+    const char* fragmentShaderSource = getStrFromFile("fragmentShader.txt", sz2);
+
+    //----- 顶点着色器 ----------------//
+    GLuint vertexShader;
+    vertexShader = glCreateShader(GL_VERTEX_SHADER);
+    glShaderSource(vertexShader, 1, &vertexShaderSource, NULL);
+    glCompileShader(vertexShader);
+
+    //----- 错误日志 片段着色器一样 ----------------//
+    GLint suc;
+    GLchar infolog[512];
+    glGetShaderiv(vertexShader, GL_COMPILE_STATUS, &suc);
+    if (!suc)
+    {
+        glGetShaderInfoLog(vertexShader, 512, NULL, infolog);
+        cout << "ERROR::SHADER::VERTEX::COMPILATION_FAILED\n" << infolog << endl;
+    }
+
+    //----- 片段着色器 ----------------//
+    GLuint fragmentShader;
+    fragmentShader = glCreateShader(GL_FRAGMENT_SHADER);
+    glShaderSource(fragmentShader, 1, &fragmentShaderSource, NULL);
+    glCompileShader(fragmentShader);
+
+    //----- 着色器程序 ----------------//
+    GLuint shaderProgram;
+    shaderProgram = glCreateProgram();
+    glAttachShader(shaderProgram, vertexShader);
+    glAttachShader(shaderProgram, fragmentShader);
+    glLinkProgram(shaderProgram);
+    GLint success;
+    GLchar infoLog[512];
+    glGetProgramiv(shaderProgram, GL_LINK_STATUS, &success);
+    if (!success) {
+        glGetProgramInfoLog(shaderProgram, 512, NULL, infoLog);
+    }
+
+    return shaderProgram;
+}
 
 int main()
 {
@@ -43,6 +135,9 @@ int main()
     // 注册键盘回调函数
     glfwSetKeyCallback(window, key_callback);
     
+    GLuint VAO = getVAO();
+    GLuint shaderProgram = getShaderProgram();
+
     // 检查glfw是否被要求退出
     while (glfwWindowShouldClose(window) == false)
     {
@@ -54,9 +149,14 @@ int main()
         // 清空缓冲
         glClear(GL_COLOR_BUFFER_BIT);   // GL_COLOR_BUFFER_BIT，GL_DEPTH_BUFFER_BIT和GL_STENCIL_BUFFER_BIT。
 
+        // 画三角形操作
+        glUseProgram(shaderProgram);
+        glBindVertexArray(VAO);
+        glDrawArrays(GL_TRIANGLES, 0, 3);
+        glBindVertexArray(0);
+
         // 函数会交换颜色缓冲（它是一个储存着GLFW窗口每一个像素颜色的大缓冲），它在这一迭代中被用来绘制，并且将会作为输出显示在屏幕上
         glfwSwapBuffers(window);
-
     }
 
     // 终止窗口

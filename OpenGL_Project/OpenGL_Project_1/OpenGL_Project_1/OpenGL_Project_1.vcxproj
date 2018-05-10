@@ -73,6 +73,7 @@
   <ItemGroup>
     <ClInclude Include="OpenGlTest1.h" />
     <ClInclude Include="OpenGlTest1_Assist.h" />
+    <ClInclude Include="VertexShader_1.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
