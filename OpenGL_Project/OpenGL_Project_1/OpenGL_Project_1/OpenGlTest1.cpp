@@ -1,5 +1,5 @@
 
-
+#include "OpenGlTest1.h"
 #include<iostream>
 #include "OpenGlTest1_Assist.h"
 
