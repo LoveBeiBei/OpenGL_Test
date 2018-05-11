@@ -97,31 +97,25 @@ GLuint getShaderProgram()
 
 int main()
 {
-    // 初始化glfw
-    glfwInit();
-    // 初始化OpenGL主次版本
-    glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
+    glfwInit();// 初始化glfw
+    glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);// 初始化OpenGL主次版本
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
-    // 初始化OpenGL模式 使用核心模式
-    glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
-    // 设置不允许用户更改窗口大小
-    glfwWindowHint(GLFW_RESIZABLE, GL_FALSE);
+    glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);// 初始化OpenGL模式 使用核心模式
+    glfwWindowHint(GLFW_RESIZABLE, GL_FALSE);// 设置不允许用户更改窗口大小
 
     // 创建窗口
     GLFWwindow* window = glfwCreateWindow(800, 600, "OpenGl_Project1", nullptr, nullptr);
-    if (window == nullptr)
-    {   
-        std::cout << "Failed to Create GLFW Window" << std::endl;
+    if (window == nullptr){   
+        cout << "Failed to Create GLFW Window" << endl;
         glfwTerminate();
         return -1;
     }
-    // 设置当前窗口为当前线程上下文
-    glfwMakeContextCurrent(window);
+    
+    glfwMakeContextCurrent(window);// 设置当前窗口为当前线程上下文
 
     // 坑:GLEW管理OpenGL函数指针使用现代化技术，GGL_FALSE的话使用核心模式会出现问题
     glewExperimental = GL_TRUE;
-    if (glewInit() != GLEW_OK)
-    {
+    if (glewInit() != GLEW_OK){
         std::cout << "Failed to initialize GLEW" << std::endl;
         return -1;
     }
