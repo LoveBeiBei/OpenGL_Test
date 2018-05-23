@@ -6,7 +6,6 @@ using namespace std;
 
 #include "OpenGlTest1.h"
 #include "OpenGlTest1_Assist.h"
-#include "VertexShader_1.h"
 
 const char* getStrFromFile(string fileName, string& str)
 {
