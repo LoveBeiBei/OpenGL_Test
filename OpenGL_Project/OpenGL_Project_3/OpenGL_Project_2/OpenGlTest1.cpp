@@ -6,6 +6,7 @@ using namespace std;
 
 #include "OpenGlTest1.h"
 #include "OpenGlTest1_Assist.h"
+#include "Shader.h"
 
 const char* getStrFromFile(string fileName, string& str)
 {
@@ -21,11 +22,24 @@ const char* getStrFromFile(string fileName, string& str)
 GLuint getVAO()
 {
     // 顶点位置
+    //GLfloat vertices[] = {
+    //    0.5f, 0.5f, 0.0f,   // 右上角
+    //    0.5f, -0.5f, 0.0f,  // 右下角
+    //    -0.5f, -0.5f, 0.0f, // 左下角
+    //    -0.5f, 0.5f, 0.0f   // 左上角
+    //};
+
+    //GLfloat vertices[] = {
+    //    0.0f, 0.5f, 0.0f,   // 右上角
+    //    0.5f, -0.5f, 0.0f,  // 右下角
+    //    0.5f, 0.5f, 0.0f, // 左下角
+    //    -0.5f, -0.5f, 0.0f   // 左上角
+    //};
     GLfloat vertices[] = {
-        0.5f, 0.5f, 0.0f,   // 右上角
-        0.5f, -0.5f, 0.0f,  // 右下角
-        -0.5f, -0.5f, 0.0f, // 左下角
-        -0.5f, 0.5f, 0.0f   // 左上角
+        // 位置              // 颜色
+        0.5f, -0.5f, 0.0f, 1.0f, 0.0f, 0.0f,   // 右下
+        -0.5f, -0.5f, 0.0f, 0.0f, 1.0f, 0.0f,   // 左下
+        0.0f, 0.5f, 0.0f, 0.0f, 0.0f, 1.0f    // 顶部
     };
 
     GLuint indices[] = { // 注意索引从0开始! 
@@ -52,12 +66,15 @@ GLuint getVAO()
     glBindBuffer(GL_ARRAY_BUFFER, VBO);
     glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
 
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
-    glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices,GL_STATIC_DRAW);
+    //glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
+    //glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices,GL_STATIC_DRAW);
 
     // 3. 设置顶点属性指针
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(GLfloat), (GLvoid*)0);
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(GLfloat), (GLvoid*)0);
     glEnableVertexAttribArray(0);
+
+    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(GLfloat), (GLvoid*)(3 * sizeof(GLfloat)));
+    glEnableVertexAttribArray(1);
     
     //4. 解绑VAO
     glBindVertexArray(0);
@@ -143,7 +160,8 @@ int main()
     glfwSetKeyCallback(window, key_callback);
     
     GLuint VAO = getVAO();
-    GLuint shaderProgram = getShaderProgram();
+    //GLuint shaderProgram = getShaderProgram();
+    Shader shader("vertexShader.vs","fragmentShader.frag");
 
     // 配置绘制图元方式 GL_LINE 线 GL_FILL 填充
     glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
@@ -161,10 +179,17 @@ int main()
         glClear(GL_COLOR_BUFFER_BIT);   // GL_COLOR_BUFFER_BIT，GL_DEPTH_BUFFER_BIT和GL_STENCIL_BUFFER_BIT。
 
         // 画三角形操作
-        glUseProgram(shaderProgram);
+        //glUseProgram(shaderProgram);
+        shader.Use();
+        // 更新uniform颜色
+        //GLfloat timeValue = glfwGetTime();
+        //GLfloat greenValue = (sin(timeValue) / 2) + 0.5;
+        //GLint vertexColorLocation = glGetUniformLocation(shaderProgram, "ourColor");
+        //glUniform4f(vertexColorLocation, 0.0f, greenValue, 0.0f, 1.0f);
+
         glBindVertexArray(VAO);
-        //glDrawArrays(GL_TRIANGLES, 0, 3);
-        glDrawElements(GL_TRIANGLES, 6,GL_UNSIGNED_INT,0);
+        glDrawArrays(GL_TRIANGLES, 0, 3);
+        //glDrawElements(GL_TRIANGLES, 3,GL_UNSIGNED_INT,0);
         glBindVertexArray(0);
 
         // 函数会交换颜色缓冲（它是一个储存着GLFW窗口每一个像素颜色的大缓冲），它在这一迭代中被用来绘制，并且将会作为输出显示在屏幕上

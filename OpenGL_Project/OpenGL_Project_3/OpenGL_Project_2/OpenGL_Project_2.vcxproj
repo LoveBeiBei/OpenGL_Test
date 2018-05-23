@@ -69,9 +69,16 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="OpenGlTest1.cpp" />
+    <ClCompile Include="Shader.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="OpenGlTest1.h" />
+    <ClInclude Include="OpenGlTest1_Assist.h" />
+    <ClInclude Include="Shader.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="fragmentShader.frag" />
+    <None Include="vertexShader.vs" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

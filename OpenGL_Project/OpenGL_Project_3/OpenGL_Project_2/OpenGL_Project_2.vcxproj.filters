@@ -21,10 +21,27 @@
     <ClCompile Include="OpenGlTest1.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
+    <ClCompile Include="Shader.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="OpenGlTest1.h">
       <Filter>源文件</Filter>
     </ClInclude>
+    <ClInclude Include="Shader.h">
+      <Filter>源文件</Filter>
+    </ClInclude>
+    <ClInclude Include="OpenGlTest1_Assist.h">
+      <Filter>源文件</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="fragmentShader.frag">
+      <Filter>源文件\include</Filter>
+    </None>
+    <None Include="vertexShader.vs">
+      <Filter>源文件\include</Filter>
+    </None>
   </ItemGroup>
 </Project>
