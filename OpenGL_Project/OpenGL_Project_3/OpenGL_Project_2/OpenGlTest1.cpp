@@ -1,12 +1,8 @@
-#include <iostream>
-#include <fstream>
-#include <string>
-#include <vector>
-using namespace std;
+
 
 #include "OpenGlTest1.h"
 #include "OpenGlTest1_Assist.h"
-#include "Shader.h"
+using namespace std;
 
 const char* getStrFromFile(string fileName, string& str)
 {
@@ -35,12 +31,31 @@ GLuint getVAO()
     //    0.5f, 0.5f, 0.0f, // 左下角
     //    -0.5f, -0.5f, 0.0f   // 左上角
     //};
+
+    //GLfloat vertices[] = {
+    //    // 位置              // 颜色
+    //    0.5f, -0.5f, 0.0f, 1.0f, 0.0f, 0.0f,   // 右下
+    //    -0.5f, -0.5f, 0.0f, 0.0f, 1.0f, 0.0f,   // 左下
+    //    0.0f, 0.5f, 0.0f, 0.0f, 0.0f, 1.0f    // 顶部
+    //};
+
+    //GLfloat vertices[] = {
+    //    //     ---- 位置 ----       ---- 颜色 ----     - 纹理坐标 -
+    //    0.5f, 0.5f, 0.0f, 1.0f, 0.0f, 0.0f, 1.0f, 1.0f,   // 右上
+    //    0.5f, -0.5f, 0.0f, 0.0f, 1.0f, 0.0f, 1.0f, 0.0f,   // 右下
+    //    -0.5f, -0.5f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f,   // 左下
+    //    -0.5f, 0.5f, 0.0f, 1.0f, 1.0f, 0.0f, 0.0f, 1.0f    // 左上
+    //};
+    
     GLfloat vertices[] = {
-        // 位置              // 颜色
-        0.5f, -0.5f, 0.0f, 1.0f, 0.0f, 0.0f,   // 右下
-        -0.5f, -0.5f, 0.0f, 0.0f, 1.0f, 0.0f,   // 左下
-        0.0f, 0.5f, 0.0f, 0.0f, 0.0f, 1.0f    // 顶部
+        //     ---- 位置 ----       ---- 颜色 ----     - 纹理坐标 -
+        0.5f, 0.5f, 0.0f, 1.0f, 0.0f, 0.0f, 3.0f, 3.0f,   // 右上
+        0.5f, -0.5f, 0.0f, 0.0f, 1.0f, 0.0f, 3.0f, 0.0f,   // 右下
+        -0.5f, -0.5f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f,   // 左下
+        -0.5f, 0.5f, 0.0f, 1.0f, 1.0f, 0.0f, 0.0f, 3.0f    // 左上
     };
+
+
 
     GLuint indices[] = { // 注意索引从0开始! 
         0, 1, 3, // 第一个三角形
@@ -66,16 +81,20 @@ GLuint getVAO()
     glBindBuffer(GL_ARRAY_BUFFER, VBO);
     glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
 
-    //glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
-    //glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices,GL_STATIC_DRAW);
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices,GL_STATIC_DRAW);
 
     // 3. 设置顶点属性指针
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(GLfloat), (GLvoid*)0);
+    //location = 0 vec3是3个float值 GL_FLOAT GL_FALSE不标准化 到下一个该值的步长 在本数据的偏移量
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(GLfloat), (GLvoid*)0);
     glEnableVertexAttribArray(0);
 
-    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(GLfloat), (GLvoid*)(3 * sizeof(GLfloat)));
+    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(GLfloat), (GLvoid*)(3 * sizeof(GLfloat)));
     glEnableVertexAttribArray(1);
     
+    glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(GLfloat), (GLvoid*)(6 * sizeof(GLfloat)));
+    glEnableVertexAttribArray(2);
+
     //4. 解绑VAO
     glBindVertexArray(0);
     return VAO;
@@ -125,6 +144,35 @@ GLuint getShaderProgram()
     return shaderProgram;
 }
 
+GLuint getTexture(string strImageName)
+{
+    GLuint texture;
+    glGenTextures(1, &texture);
+    glBindTexture(GL_TEXTURE_2D, texture);
+    // 为当前绑定的纹理对象设置环绕、过滤方式
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+    
+    //float borderColor[] = { 1.0f, 1.0f, 0.0f, 1.0f };
+    //glTexParameterfv(GL_TEXTURE_2D, GL_TEXTURE_BORDER_COLOR, borderColor);
+
+    //glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_MIRRORED_REPEAT);  // 就近
+    //glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_MIRRORED_REPEAT);   // 线性
+
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
+    // 加载并生成纹理
+    int width, height;
+    unsigned char* image = SOIL_load_image(strImageName.c_str(), &width, &height, 0, SOIL_LOAD_RGB);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, image);
+    glGenerateMipmap(GL_TEXTURE_2D);
+    SOIL_free_image_data(image);
+
+    glBindTexture(GL_TEXTURE_2D, 0);
+    return texture;
+}
+
 int main()
 {
     glfwInit();// 初始化glfw
@@ -151,17 +199,21 @@ int main()
     }
 
     // 获取window大小 上面设置的800 600
-    int width, height;
-    glfwGetFramebufferSize(window, &width, &height);
+    int framewidth, frameheight;
+    glfwGetFramebufferSize(window, &framewidth, &frameheight);
     // 设置opengl渲染画布大小
-    glViewport(0, 0, width, height);   //前两个参数控制窗口左下角的位置。第三个和第四个参数控制渲染窗口的宽度和高度（像素）
+    glViewport(0, 0, framewidth, frameheight);   //前两个参数控制窗口左下角的位置。第三个和第四个参数控制渲染窗口的宽度和高度（像素）
 
     // 注册键盘回调函数
-    glfwSetKeyCallback(window, key_callback);
+    glfwSetKeyCallback(window, key_callback_1);
     
     GLuint VAO = getVAO();
     //GLuint shaderProgram = getShaderProgram();
     Shader shader("vertexShader.vs","fragmentShader.frag");
+    setCurProgram(shader.Program);
+    GLuint texture1 = getTexture("Image/container.jpg");
+    GLuint texture2 = getTexture("Image/awesomeface.png");
+    
 
     // 配置绘制图元方式 GL_LINE 线 GL_FILL 填充
     glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
@@ -186,10 +238,20 @@ int main()
         //GLfloat greenValue = (sin(timeValue) / 2) + 0.5;
         //GLint vertexColorLocation = glGetUniformLocation(shaderProgram, "ourColor");
         //glUniform4f(vertexColorLocation, 0.0f, greenValue, 0.0f, 1.0f);
+        
+        glActiveTexture(GL_TEXTURE0);
+        glBindTexture(GL_TEXTURE_2D, texture1);
+        glUniform1i(glGetUniformLocation(shader.Program, "ourTexture1"), 0);
+        glActiveTexture(GL_TEXTURE1);
+        glBindTexture(GL_TEXTURE_2D, texture2);
+        glUniform1i(glGetUniformLocation(shader.Program, "ourTexture2"), 1);
+
+
+        //glBindTexture(GL_TEXTURE_2D, texture);
 
         glBindVertexArray(VAO);
-        glDrawArrays(GL_TRIANGLES, 0, 3);
-        //glDrawElements(GL_TRIANGLES, 3,GL_UNSIGNED_INT,0);
+        //glDrawArrays(GL_TRIANGLES, 0, 3);
+        glDrawElements(GL_TRIANGLES, 6,GL_UNSIGNED_INT,0);
         glBindVertexArray(0);
 
         // 函数会交换颜色缓冲（它是一个储存着GLFW窗口每一个像素颜色的大缓冲），它在这一迭代中被用来绘制，并且将会作为输出显示在屏幕上

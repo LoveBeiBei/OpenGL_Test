@@ -7,6 +7,7 @@
 #include <iostream>
 
 #include <GL/glew.h> // 包含glew来获取所有的必须OpenGL头文件
+//#include "OpenGlTest1_Assist.h"
 
 class Shader
 {
