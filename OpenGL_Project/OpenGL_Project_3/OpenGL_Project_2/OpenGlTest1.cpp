@@ -39,23 +39,21 @@ GLuint getVAO()
     //    0.0f, 0.5f, 0.0f, 0.0f, 0.0f, 1.0f    // 顶部
     //};
 
-    //GLfloat vertices[] = {
-    //    //     ---- 位置 ----       ---- 颜色 ----     - 纹理坐标 -
-    //    0.5f, 0.5f, 0.0f, 1.0f, 0.0f, 0.0f, 1.0f, 1.0f,   // 右上
-    //    0.5f, -0.5f, 0.0f, 0.0f, 1.0f, 0.0f, 1.0f, 0.0f,   // 右下
-    //    -0.5f, -0.5f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f,   // 左下
-    //    -0.5f, 0.5f, 0.0f, 1.0f, 1.0f, 0.0f, 0.0f, 1.0f    // 左上
-    //};
-    
     GLfloat vertices[] = {
+        //     ---- 位置 ----       ---- 颜色 ----     - 纹理坐标 -
+        0.5f, 0.5f, 0.0f, 1.0f, 0.0f, 0.0f, 1.0f, 1.0f,   // 右上
+        0.5f, -0.5f, 0.0f, 0.0f, 1.0f, 0.0f, 1.0f, 0.0f,   // 右下
+        -0.5f, -0.5f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f,   // 左下
+        -0.5f, 0.5f, 0.0f, 1.0f, 1.0f, 0.0f, 0.0f, 1.0f    // 左上
+    };
+    
+    /*GLfloat vertices[] = {
         //     ---- 位置 ----       ---- 颜色 ----     - 纹理坐标 -
         0.5f, 0.5f, 0.0f, 1.0f, 0.0f, 0.0f, 3.0f, 3.0f,   // 右上
         0.5f, -0.5f, 0.0f, 0.0f, 1.0f, 0.0f, 3.0f, 0.0f,   // 右下
         -0.5f, -0.5f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f,   // 左下
         -0.5f, 0.5f, 0.0f, 1.0f, 1.0f, 0.0f, 0.0f, 3.0f    // 左上
-    };
-
-
+    };*/
 
     GLuint indices[] = { // 注意索引从0开始! 
         0, 1, 3, // 第一个三角形
@@ -214,6 +212,9 @@ int main()
     GLuint texture1 = getTexture("Image/container.jpg");
     GLuint texture2 = getTexture("Image/awesomeface.png");
     
+    //glm::mat4 trans;
+    //trans = glm::rotate(trans, glm::radians(90.0f), glm::vec3(0.0, 0.0, 1.0));
+    //trans = glm::scale(trans, glm::vec3(0.5, 0.5, 0.5));
 
     // 配置绘制图元方式 GL_LINE 线 GL_FILL 填充
     glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
@@ -246,6 +247,12 @@ int main()
         glBindTexture(GL_TEXTURE_2D, texture2);
         glUniform1i(glGetUniformLocation(shader.Program, "ourTexture2"), 1);
 
+        glm::mat4 trans;
+        //trans = glm::translate(trans, glm::vec3(0.5f, -0.5f, 0.0f));
+        trans = glm::rotate(trans, (float)glfwGetTime(), glm::vec3(0.0f, 0.0f, 1.0f));
+
+        unsigned int transformLoc = glGetUniformLocation(shader.Program, "transform");
+        glUniformMatrix4fv(transformLoc, 1, GL_FALSE, glm::value_ptr(trans));
 
         //glBindTexture(GL_TEXTURE_2D, texture);
 
